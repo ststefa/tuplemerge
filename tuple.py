@@ -76,7 +76,7 @@ def sort_tuples(tuples: List[RangeTuple]) -> List[RangeTuple]:
 
 def count_tuples(tuples: List[RangeTuple]) -> int:
     """ Count number of tuples """
-    return [len(tuples)]
+    return len(tuples)
 
 
 def naive_strategy(tuples: List[RangeTuple]) -> List[RangeTuple]:
