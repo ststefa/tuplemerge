@@ -1,5 +1,33 @@
 # Coding Task 2
 
+## Table of Contents
+
+<!-- TOC -->
+
+- [Coding Task 2](#coding-task-2)
+  - [Table of Contents](#table-of-contents)
+  - [Task](#task)
+    - [Example](#example)
+    - [Questions](#questions)
+  - [Further assumptions](#further-assumptions)
+  - [Implementation](#implementation)
+  - [Usage](#usage)
+    - [`gen` command](#gen-command)
+    - [`merge` command](#merge-command)
+    - [`verify` command](#verify-command)
+    - [`sort` command](#sort-command)
+    - [`count` command](#count-command)
+  - [Tests](#tests)
+  - [Answers](#answers)
+    - [What is the runtime of your program?](#what-is-the-runtime-of-your-program)
+      - [naive strategy](#naive-strategy)
+      - [sort strategy](#sort-strategy)
+      - [How can robustness be ensured, especially considering very large inputs ?](#how-can-robustness-be-ensured-especially-considering-very-large-inputs-)
+      - [How does the memory consumption of your program behave ?](#how-does-the-memory-consumption-of-your-program-behave-)
+  - [License](#license)
+
+<!-- /TOC -->
+
 ## Task
 
 Implement a MERGE function that receives a list of intervals and returns a list of intervals as a result. All overlapping intervals should be merged in the result. All non-overlapping intervals remain unaffected.
@@ -183,3 +211,7 @@ Rodustness can be validated running test cases with varying inputs. The implemen
 #### How does the memory consumption of your program behave ?
 
 None of the implemented merge strategies make extensive use of intermediary results. Memory consumption is neglectable to cpu consumption.
+
+## License
+
+This work is licensed under [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0)
