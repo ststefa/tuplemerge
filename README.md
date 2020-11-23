@@ -80,7 +80,7 @@ Some assumptions need to be made to clearly define the rules for intervals and i
 
 I assume that the performance matters because the algorithm is used for a performance critical task. I opted to make the merge-strategy implementation modular in this regard to encourage experimentation and continued development. One might rightfully consider this over-engineering. However given the suggested time to complete the exercise I went for a more-than-minimal approach. In order not to inflate the code unnecessarily, I have avoided the implementation of distracting (distracting within the scope of the task) functionality like handling of files or logging.
 
-The actual merge algorithms are implemented in `*_strategy` methods. The are invoked dynamically. To add a "whatever" strategy, implement a `whatever_strategy()` method and add `whatever` to the list of choices in the `merge` argument-parser.
+The actual merge algorithms are implemented in `*_strategy` methods. They are invoked dynamically. To add a "whatever" strategy, implement a `whatever_strategy()` method and add `whatever` to the list of choices in the `merge` argument-parser.
 
 ## Usage
 
