@@ -37,7 +37,7 @@ def generate_tuples(minval: int, maxval: int, maxrange: int, num: int) -> List[R
     return result
 
 
-def merge_tuples(strategy: str, tuples: List[RangeTuple]):
+def merge_tuples(strategy: str, tuples: List[RangeTuple]) -> List[RangeTuple]:
     """ Dynamically invoke <strategy>_strategy() function
 
         :param strategy: The merge strategy to use. A corresponding method
@@ -157,7 +157,7 @@ def _merge(tuple1: RangeTuple, tuple2: RangeTuple) -> RangeTuple:
     return (lower, upper)
 
 
-def init_parser():
+def init_parser() -> argparse.ArgumentParser:
     """ Prepare parser with possible invocation args
     """
 
@@ -205,8 +205,7 @@ class TupleException(Exception):
 
 def main():
     args = init_parser().parse_args()
-    # http://stackoverflow.com/questions/16878315/what-is-the-right-way-to-treat-python-argparse-namespace-as-a-dictionary#16878364
-    # http://stackoverflow.com/questions/2465921/how-to-copy-a-dictionary-and-only-edit-the-copy#2465932
+    # see http://stackoverflow.com/questions/16878315/what-is-the-right-way-to-treat-python-argparse-namespace-as-a-dictionary#16878364
     arg_list = dict(vars(args))
     del arg_list['func']
     del arg_list['object']
