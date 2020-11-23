@@ -4,8 +4,6 @@
 
 Implement a MERGE function that receives a list of intervals and returns a list of intervals as a result. All overlapping intervals should be merged in the result. All non-overlapping intervals remain unaffected.
 
-https://docs.google.com/document/d/1FS272sy-boGQ49TBFKirIbn5YLasZi1XcyAq5NZ2uBI/edit#
-
 ### Example
 
 Input: [25, 30] [2, 19] [14, 23] [4, 8]
@@ -16,7 +14,9 @@ Output:[2,23] [25,30]
 
 - What is the runtime of your program?
 - How can robustness be ensured, especially considering very large inputs ?
+- How does the memory consumption of your program behave ?
 
+(see [https://docs.google.com/document/d/1FS272sy-boGQ49TBFKirIbn5YLasZi1XcyAq5NZ2uBI] for original exercise text)
 
 ## Further assumptions
 
@@ -54,7 +54,7 @@ I assume that the performance matters because the algorithm is used for a perfor
 
 The actual merge algorithms are implemented in `*_strategy` methods. The are invoked dynamically. To add a "whatever" strategy, implement a `whatever_strategy()` method and add `whatever` to the list of choices in the `merge` argument-parser.
 
-# Usage
+## Usage
 
 The code is entirely implemented in the python script `tuple.py`. It features a list of commands which can specified as an argument. Each command might have varying input parameters. All commands (except "gen") read data from stdin. All commands write their result to stdout. JSON is used as both in- and output format.
 
@@ -63,8 +63,6 @@ To be able to verify the correctness of the algorithms I added some tool-functio
     ./tuple.py gen 0 10000000 9000 10000 | ./tuple.py merge | ./tuple.py verify
 
 ...generates a list of 10000 tuples between 0 and 10000000 with a maximum range of 9000, merges them using the default strategy and verifies that the result does not contain overlapping elements.
-
-## tuple.py commands
 
 ### `gen` command
 
@@ -84,8 +82,8 @@ Merge a list of tuples read from stdin and write the result to stdout. The merge
 
 Read a list of tuples from stdin and validate that no overlapping tuples exist. Writes the input to stdout if validation succeeded or raises an error otherwise.
 
-    $ echo [[1, 2], [3, 4]] | ./tuple.py verify
-    [[1, 2], [3, 4]]
+    $ echo [[3, 4], [1, 2]] | ./tuple.py verify
+    [[3, 4], [1, 2]]
     $ echo [[1, 2], [2, 4]] | ./tuple.py verify
     Error: Elements [2, 4] and [1, 2] overlap
 
@@ -107,20 +105,20 @@ Read a list of tuples from stdin, count their elements and write the result to s
     $ ./tuple.py gen 0 10000000 4000 25000 | ./tuple.py merge | ./tuple.py count
     [179]
 
-# Tests
+## Tests
 
 Simple unit tests as well as algorithm-correctness tests are performed using pytest. To run
 
   1. `pip install pytest`
   1. `pytest -v`
 
-# Answers
+## Answers
 
-## What is the runtime of your program?
+### What is the runtime of your program?
 
 Time/complexity can be measured e.g. using pythons builtin profiler. For large inputs, the runtime is determined almost entirely by the merge algorithm. Two example algorithms have been implemented:
 
-### naive strategy
+#### naive strategy
 
 Modeled after the scheme how one would manually approach the problem. On every iteration, one element is sliced off from the input data. Then that element is compared with every element of the result list, merging any overlaps that are found.
 
@@ -148,7 +146,7 @@ Because this requires to iterate over the result list for every element in the i
             1    0.044    0.044    0.044    0.044 decoder.py:343(raw_decode)
         99377    0.031    0.000    0.031    0.000 {built-in method builtins.max}
 
-## sort strategy
+#### sort strategy
 
 If the input is sorted then we can take advantage of the fact that all potentially overlapping elements are necessarily neighbours. It does not matter whether the upper or lower bound is used for sorting. In my implementation I chose to use the lower bound.
 
@@ -178,6 +176,10 @@ Theoretically, this advantage would be reduced by the fact that sorting the list
         99462    0.025    0.000    0.025    0.000 {built-in method builtins.min}
         99370    0.022    0.000    0.022    0.000 {built-in method builtins.max}
 
-## How can robustness be ensured, especially considering very large inputs ?
+#### How can robustness be ensured, especially considering very large inputs ?
 
 Rodustness can be validated running test cases with varying inputs. The implemented tool functions are meant to help in this regard.
+
+#### How does the memory consumption of your program behave ?
+
+None of the implemented merge strategies make extensive use of intermediary results. Memory consumption is neglectable to cpu consumption.
