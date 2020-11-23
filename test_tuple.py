@@ -31,9 +31,9 @@ def test_generate_tuples():
 def test_verify_tuples():
     assert tuple.verify_tuples([(1, 1), (2, 3)])
     assert tuple.verify_tuples([(10, 20), (2, 3)])
-    with pytest.raises(Exception):
+    with pytest.raises(tuple.TupleException):
         tuple.verify_tuples([(1, 2), (2, 3)])
-    with pytest.raises(Exception):
+    with pytest.raises(tuple.TupleException):
         tuple.verify_tuples([(5, 10), (2, 3), (8, 12)])
 
 
@@ -47,7 +47,7 @@ def test_count_tuples():
     assert tuple.count_tuples([]) == 0
     assert tuple.count_tuples([(1, 1)]) == 1
     # run some random tests
-    for i in range(0, 10):
+    for _ in range(0, 10):
         testset = _generate_test_set()
         tuples = tuple.generate_tuples(**testset)
         assert tuple.count_tuples(tuples) == testset['num']
