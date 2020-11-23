@@ -206,7 +206,7 @@ Theoretically, this advantage would be reduced by the fact that sorting the list
 
 #### How can robustness be ensured, especially considering very large inputs ?
 
-Rodustness can be validated running test cases with varying inputs. The implemented tool functions are meant to help in this regard.
+Robustness can be validated running test cases with varying inputs. The implemented tool functions are meant to help in this regard.
 
 #### How does the memory consumption of your program behave ?
 
