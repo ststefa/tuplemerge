@@ -6,19 +6,6 @@
     "configurations": [
 
         {
-            "name": "Python: tuplemerge.py",
-            "type": "python",
-            "request": "launch",
-            "program": "tuplemerge.py",
-            "args": [
-                "-f",
-                "data.json",
-                "-s",
-                "naive",
-            ],
-            "console": "integratedTerminal",
-        },
-        {
             "name": "tuple.py gen",
             "type": "python",
             "request": "launch",
