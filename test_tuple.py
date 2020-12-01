@@ -1,34 +1,70 @@
-import tuple
 import random
+
 import pytest
 
+import tuple
 
-def _generate_test_set():
-    """ Helper method to generate a random input dataset """
-    test_set = {}
-    test_set['minval'] = random.randint(0, 1000)
-    test_set['maxval'] = test_set['minval']+random.randint(0, 1000)
-    test_set['maxrange'] = random.randint(10, 100)
-    test_set['num'] = random.randint(0, 100000)
-    return test_set
+from hypothesis import given, assume
+import hypothesis.strategies as st
 
 
-def test_generate_tuples():
-    tuples = tuple.generate_tuples(0, 10, 3, 10000)
-    lval_list = [x for (x, y) in tuples]
-    rval_list = [y for (x, y) in tuples]
+@st.composite
+def generate_tuple_params(draw):
+    """ use hypothesis to generate parameter sets """
+    result = {}
+    result['minval'] = draw(st.integers(min_value=0, max_value=1000))
+    result['maxval'] = draw(st.integers(
+        min_value=result['minval'], max_value=100000))
+    assume(result['maxval'] >= result['minval'])
+    result['maxrange'] = draw(st.integers(min_value=1, max_value=1000))
+    result['num'] = draw(st.integers(min_value=1, max_value=1000))
+    return result
+
+
+@given(generate_tuple_params())
+def generate_tuples_test_composite(params):
+    ### use hypothesis composite to generate tuples from random input ###
+    # redundant with generate_tuples_test_data. Just to check out hypothesis
+    tuple.generate_tuples(**params)
+
+@given(st.data())
+def generate_tuples_test_data(data):
+    ### draw from hypothesis data to generate tuples from random input ###
+    # redundant with generate_tuples_test_composite. Just to check out hypothesis
+    x = data.draw(st.integers(min_value=0, max_value=1000))
+    y = data.draw(st.integers(min_value=x, max_value=100000))
+    r = data.draw(st.integers(min_value=1, max_value=1000))
+    n = data.draw(st.integers(min_value=1, max_value=1000))
+    tuples = tuple.generate_tuples(x, y, r, n)
+
+def generate_tuples_test_probability():
+    ### test value distribution in generated tuples ###
+    tuples = tuple.generate_tuples(0, 100, 10, 100000)
+    lval_list = [x for (x, _) in tuples]
+    rval_list = [y for (_, y) in tuples]
     # check edges
     assert 0 in lval_list
-    assert 0 not in rval_list
-    assert 10 in rval_list
-    assert 10 not in lval_list
+    assert 100 in rval_list
     # check middle part
-    for i in range(1, 10):
+    for i in range(1, 100):
         assert i in lval_list
         assert i in rval_list
 
+# playing around with hypothesis really ;)
+@pytest.mark.parametrize("tuple1, tuple2, output", [
+    ((1, 1), (1, 1), (1, 1)),
+    ((0, 1), (1, 2), (0, 2)),
+    ((3, 5), (2, 5), (2, 5)),
+    ((3, 5), (2, 4), (2, 5)),
+    ((3, 5), (4, 7), (3, 7)),
+])
+def merge_test(tuple1, tuple2, output):
+    ### test correctness of merge logic ###
+    assert tuple._merge(tuple1, tuple2) == output
 
-def test_verify_tuples():
+
+def verify_tuples_test():
+    ### test correctness of verify logic (must raise on overlap) ###
     assert tuple.verify_tuples([(1, 1), (2, 3)])
     assert tuple.verify_tuples([(10, 20), (2, 3)])
     with pytest.raises(tuple.TupleException):
@@ -37,23 +73,24 @@ def test_verify_tuples():
         tuple.verify_tuples([(5, 10), (2, 3), (8, 12)])
 
 
-def test_sort_tuples():
+def sort_tuples_test():
     assert tuple.sort_tuples([(1, 1), (2, 3)]) == [(1, 1), (2, 3)]
     assert tuple.sort_tuples([(2, 3), (1, 1)]) == [(1, 1), (2, 3)]
 
 
-def test_count_tuples():
+@given(generate_tuple_params())
+def count_tuples_test(params):
     # simple tests
     assert tuple.count_tuples([]) == 0
     assert tuple.count_tuples([(1, 1)]) == 1
     # run some random tests
     for _ in range(0, 10):
-        testset = _generate_test_set()
-        tuples = tuple.generate_tuples(**testset)
-        assert tuple.count_tuples(tuples) == testset['num']
+        tuples = tuple.generate_tuples(**params)
+        assert tuple.count_tuples(tuples) == params['num']
 
 
-def test_overlap():
+def overlap_test():
+    ### test correctness of overlap logic ###
     assert tuple._overlaps((1, 1), (1, 1)) == True
     assert tuple._overlaps((3, 5), (1, 3)) == True
     assert tuple._overlaps((3, 5), (1, 4)) == True
@@ -70,19 +107,11 @@ def test_overlap():
     assert tuple._overlaps((5, 6), (3, 4)) == False
 
 
-def test_merge():
-    assert tuple._merge((1, 1), (1, 1)) == (1, 1)
-    assert tuple._merge((0, 1), (1, 2)) == (0, 2)
-    assert tuple._merge((3, 5), (2, 5)) == (2, 5)
-    assert tuple._merge((3, 5), (2, 4)) == (2, 5)
-    assert tuple._merge((3, 5), (4, 7)) == (3, 7)
-
-
-def test_naive_strategy():
+@pytest.mark.slow
+@given(generate_tuple_params())
+def naive_strategy_test(params):
     for _ in range(0, 10):
-        testset = _generate_test_set()
-        print(testset)
-        tuples = tuple.generate_tuples(**testset)
+        tuples = tuple.generate_tuples(**params)
         result = tuple.naive_strategy(tuples)
         try:
             tuple.verify_tuples(result)
@@ -91,11 +120,11 @@ def test_naive_strategy():
                 f'Validation failed for input data {tuples} with: {e}')
 
 
-def test_sort_strategy():
+@pytest.mark.slow
+@given(generate_tuple_params())
+def sort_strategy_test(params):
     for _ in range(0, 10):
-        testset = _generate_test_set()
-        print(testset)
-        tuples = tuple.generate_tuples(**testset)
+        tuples = tuple.generate_tuples(**params)
         result = tuple.sort_strategy(tuples)
         try:
             tuple.verify_tuples(result)
