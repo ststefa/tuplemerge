@@ -2,11 +2,9 @@
 # $Id: ststefa 20201118 $
 
 import argparse
-import random
 import json
-
+import random
 import sys
-
 from typing import List, Tuple
 
 # A RangeTuple represents a sequential range of natural numbers
@@ -28,10 +26,10 @@ def generate_tuples(minval: int, maxval: int, maxrange: int, num: int) -> List[R
             'minval- and maxval must be >= 0, maxrange and num must be > 0')
     if maxval < minval:
         raise TupleException('maxval must be bigger or equal to minval')
-    result = []
+    result: List[RangeTuple] = []
     for _ in range(num):
-        lower = random.randint(minval, maxval-1)
-        upper = random.randint(lower+1, min(maxval, lower+maxrange))
+        lower = random.randint(minval, maxval)
+        upper = random.randint(lower, min(maxval, lower+maxrange))
         # add tuple to list (note double "(())")
         result.append((lower, upper))
     return result
@@ -57,7 +55,7 @@ def verify_tuples(tuples: List[RangeTuple]) -> List[RangeTuple]:
         :raises: TupleException: If two tuples overlap
     """
     # create a copy, we want to change the input
-    result=tuples[:]
+    result = tuples[:]
     result.sort(key=lambda elem: elem[0])
     elem = result.pop()
     while len(result) > 0:
