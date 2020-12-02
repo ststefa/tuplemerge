@@ -39,12 +39,15 @@ def merge_tuples(strategy: str, tuples: List[RangeTuple]) -> List[RangeTuple]:
     """ Dynamically invoke <strategy>_strategy() function
 
         :param strategy: The merge strategy to use. A corresponding method
-            <strategy>_strategy() must exist. This is not checked here because
-            the list a strategies is already defined in the argument parser.
+            <strategy>_strategy() must exist. If a strategy is added the
+            parser also needs to be extended to accept the new choice.
     """
     # Using a class maybe preferrable over using globals(). Omitting here for brevity.
     # see https://www.danielmorell.com/blog/dynamically-calling-functions-in-python-safely
-    func = globals()[strategy + '_strategy']
+    try:
+        func = globals()[strategy + '_strategy']
+    except KeyError as e:
+        raise TupleException(f'No such merge strategy: {e}')
     result = func(tuples)
     return result
 
