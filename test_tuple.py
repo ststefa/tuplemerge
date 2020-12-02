@@ -20,6 +20,14 @@ def generate_tuple_params(draw):
     result['num'] = draw(st.integers(min_value=1, max_value=1000))
     return result
 
+def generate_tuples_test_primitive():
+    ### deterministic edge case tests ###
+    tuple.generate_tuples(0,0,1,1)
+    with pytest.raises(tuple.TupleException):
+        tuple.generate_tuples(0,0,0,0)
+    with pytest.raises(tuple.TupleException):
+        tuple.generate_tuples(2,1,1,1)
+
 
 @given(generate_tuple_params())
 def generate_tuples_test_composite(params):
@@ -50,7 +58,7 @@ def generate_tuples_test_probability():
         assert i in lval_list
         assert i in rval_list
 
-# playing around with hypothesis really ;)
+# playing around with pytest really ;)
 @pytest.mark.parametrize("tuple1, tuple2, output", [
     ((1, 1), (1, 1), (1, 1)),
     ((0, 1), (1, 2), (0, 2)),
@@ -62,6 +70,12 @@ def merge_test(tuple1, tuple2, output):
     ### test correctness of merge logic ###
     assert tuple._merge(tuple1, tuple2) == output
 
+
+def merge_tuples_test():
+    ### verify dynamic invocation ###
+    assert tuple.merge_tuples('naive',[(0,0), (0,0)]) == [(0,0)]
+    with pytest.raises(tuple.TupleException):
+        assert tuple.merge_tuples('nonexistent',[(0,0), (0,0)])
 
 def verify_tuples_test():
     ### test correctness of verify logic (must raise on overlap) ###
